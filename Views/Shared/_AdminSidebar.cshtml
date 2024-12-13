@@ -1,0 +1,50 @@
+﻿<div class="sidebar w-64 bg-white h-screen shadow-md fixed left-0 top-0 overflow-y-auto">
+    <div class="p-6 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+            <i class="fas fa-wallet mr-3 text-blue-500"></i>
+            Budget Buddy
+        </h1>
+    </div>
+
+    <nav class="mt-6">
+        <!-- General Section -->
+        <h3 class="px-6 text-xs uppercase text-gray-600 font-semibold mb-2">General</h3>
+        <ul class="space-y-1">
+            <li>
+                <a asp-controller="Admin" asp-action="BudgetAnalysis" class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors duration-200 ease-in-out transform hover:scale-105 rounded-md">
+                    <i class="fas fa-home mr-3 text-blue-500"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Admin" asp-action="SpendingTrends" class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors duration-200 ease-in-out transform hover:scale-105 rounded-md">
+                    <i class="fas fa-list mr-3 text-blue-500"></i>
+                    Spending Trends
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Admin" asp-action="Others" class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors duration-200 ease-in-out transform hover:scale-105 rounded-md">
+                    <i class="fas fa-exchange-alt mr-3 text-blue-500"></i>
+                    Others
+                </a>
+            </li>
+        </ul>
+
+        <!-- Extras Section -->
+        <h3 class="px-6 text-xs uppercase text-gray-600 font-semibold mb-2 mt-6">Extras</h3>
+        <ul class="space-y-1">
+            <li>
+                <a asp-controller="AdminFeedback" asp-action="Index" class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors duration-200 ease-in-out transform hover:scale-105 rounded-md">
+                    <i class="fas fa-chart-bar mr-3 text-blue-500"></i>
+                    Announcements
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Log" asp-action="Index" class="flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors duration-200 ease-in-out transform hover:scale-105 rounded-md">
+                    <i class="fas fa-user-plus mr-3 text-blue-500"></i>
+                    Sign Out
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

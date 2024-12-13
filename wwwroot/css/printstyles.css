@@ -1,0 +1,87 @@
+﻿@media print {
+    /* Hide all unnecessary elements */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Hide sidebar completely */
+    .sidebar {
+        display: none !important;
+    }
+
+    /* Reset layout for printing */
+    .main-content {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        padding-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Container adjustments */
+    .print-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Typography and readability */
+    body {
+        font-size: 10pt;
+        line-height: 1.5;
+    }
+
+    /* Remove background colors and decorative elements */
+    .bg-white, .bg-gradient-to-r {
+        background-color: white !important;
+        background-image: none !important;
+        color: black !important;
+    }
+
+    /* Remove shadows and rounded corners */
+    .shadow-md, .shadow {
+        box-shadow: none !important;
+    }
+
+    .rounded-lg {
+        border: 1px solid #ddd;
+        border-radius: 0;
+    }
+
+    /* Ensure print date is visible */
+    .print-date {
+        display: block !important;
+        margin-top: 10px;
+        font-size: 8pt;
+    }
+
+    /* Table formatting for print */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+    }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+            font-size: 9pt;
+        }
+
+    /* Page break preferences */
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+
+    table, img {
+        page-break-inside: avoid;
+    }
+}
+
+/* Ensure links are readable */
+@media print {
+    a:link, a:visited {
+        color: black !important;
+        text-decoration: none !important;
+    }
+}

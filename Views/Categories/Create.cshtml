@@ -1,0 +1,85 @@
+﻿@model BudgetCategory
+
+<div class="max-w-md mx-auto bg-white rounded-2xl shadow-2xl border-t-4 border-blue-500 p-8">
+    <div class="text-center mb-6">
+        <div class="inline-block bg-blue-50 p-4 rounded-full mb-4">
+            <i class="fas fa-tags text-blue-500 text-2xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold text-gray-800 mb-2">Create New Budget Category</h3>
+        <p class="text-sm text-gray-500">Set up a new budget tracking category</p>
+    </div>
+
+    <form asp-action="Create" method="post" class="space-y-5">
+        <div>
+            <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-2">
+                Category Name
+                <span class="text-red-500 ml-1">*</span>
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-tag text-gray-400"></i>
+                </div>
+                <input asp-for="Name" placeholder="e.g., Groceries"
+                       class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+            </div>
+            <span asp-validation-for="Name" class="text-red-500 text-xs mt-1 block"></span>
+        </div>
+
+        <div>
+            <label asp-for="TotalBudget" class="block text-sm font-medium text-gray-700 mb-2">
+                Budget Amount
+                <span class="text-red-500 ml-1">*</span>
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-dollar-sign text-gray-400"></i>
+                </div>
+                <input asp-for="TotalBudget" placeholder="Enter budget amount" type="number" min="0" step="0.01"
+                       class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+            </div>
+            <span asp-validation-for="TotalBudget" class="text-red-500 text-xs mt-1 block"></span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label asp-for="StartDate" class="block text-sm font-medium text-gray-700 mb-2">
+                    Start Date
+                    <span class="text-red-500 ml-1">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-calendar-alt text-gray-400"></i>
+                    </div>
+                    <input asp-for="StartDate" type="date"
+                           value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                           class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                </div>
+                <span asp-validation-for="StartDate" class="text-red-500 text-xs mt-1 block"></span>
+            </div>
+
+            <div>
+                <label asp-for="EndDate" class="block text-sm font-medium text-gray-700 mb-2">
+                    End Date
+                    <span class="text-red-500 ml-1">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-calendar-check text-gray-400"></i>
+                    </div>
+                    <input asp-for="EndDate" type="date"
+                           value="@DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd")"
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                           class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                </div>
+                <span asp-validation-for="EndDate" class="text-red-500 text-xs mt-1 block"></span>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-lg">
+                <i class="fas fa-plus mr-2"></i>Create Budget Category
+            </button>
+        </div>
+    </form>
+</div>

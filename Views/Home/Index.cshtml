@@ -1,0 +1,240 @@
+﻿@model budget_buddy_trial.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Financial Dashboard";
+}
+
+<header class="bg-gradient-to-r from-blue-800 to-blue-600 text-white shadow-md rounded-lg p-6 mb-8">
+    <div class="flex items-center">
+        <i class="fa-solid fa-gauge text-4xl mr-4"></i>
+        <div>
+            <h2 class="text-4xl font-bold">Dashboard</h2>
+            <p class="text-lg mt-1">Overview of your financial status</p>
+        </div>
+    </div>
+</header>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Total Expenses Card -->
+    <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-semibold flex items-center">
+            <i class="fas fa-money-bill-wave mr-2"></i> Total Expenses
+        </h3>
+        <p class="text-3xl font-extrabold mt-2 text-right">@Model.TotalExpenses.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</p>
+    </div>
+
+    <!-- Wallet Balance Card -->
+    <div class="bg-gradient-to-r from-green-500 to-green-700 text-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-semibold flex items-center">
+            <i class="fas fa-wallet mr-2"></i> Wallet Balance
+        </h3>
+        <p class="text-3xl font-extrabold mt-2 text-right">@Model.WalletBalance.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</p>
+    </div>
+
+    <!-- Budget Categories Card -->
+    <div class="bg-gradient-to-r from-yellow-500 to-yellow-700 text-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-semibold flex items-center">
+            <i class="fas fa-list mr-2"></i> Budget Categories
+        </h3>
+        <div class="mt-4 max-h-40 overflow-y-auto">
+            @foreach (var category in Model.Categories)
+            {
+                <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between">
+                        <h4 class="text-lg font-semibold text-gray-800">@category.Name</h4>
+                        <span class="@(category.Status == BudgetStatus.Warning ? "text-red-500" : "text-green-500") font-semibold">
+                            @category.Status
+                        </span>
+                    </div>
+                    <p class="text-gray-600">
+                        Remaining Budget: @category.RemainingBudget.ToString("C", new System.Globalization.CultureInfo("fil-PH")) / @category.TotalBudget.ToString("C", new System.Globalization.CultureInfo("fil-PH"))
+                    </p>
+                    <div class="progress-bar bg-gray-200 h-2 rounded mt-2">
+                        <div class="progress-bar-fill @(category.Status == BudgetStatus.Warning ? "bg-red-500" : "bg-green-500") h-2 rounded"
+                             style="width: @((category.RemainingBudget / category.TotalBudget) * 100)%;"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+    <!-- Monthly Expenses Chart -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-500">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-chart-line mr-3 text-blue-500"></i> Monthly Expenses
+            </h3>
+            <span class="text-gray-500 text-sm">Trend Analysis</span>
+        </div>
+        <div class="mt-4">
+            <canvas id="lineChart" style="height: 400px;"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Transactions Table -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-500">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-history mr-3 text-blue-500"></i> Recent Transactions
+            </h3>
+            <span class="text-gray-500 text-sm">Last 30 Days</span>
+        </div>
+        <div class="overflow-y-auto max-h-96">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-blue-100">
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var transaction in Model.RecentTransactions)
+                    {
+                        <tr class="hover:bg-blue-50 transition-colors border-b border-blue-50 last:border-b-0">
+                            <td class="px-4 py-3 text-sm text-gray-700">@transaction.BudgetCategory.Name</td>
+                            <td class="px-4 py-3 text-sm text-gray-700">@transaction.Date.ToString("dd MMM yyyy")</td>
+                            <td class="px-4 py-3 text-right text-sm font-semibold text-blue-600">@transaction.Amount.ToString("C", new System.Globalization.CultureInfo("fil-PH"))</td>
+                        </tr>
+                    }
+                    @if (!Model.RecentTransactions.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="px-4 py-4 text-center text-gray-500">No recent transactions.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+@section Scripts { 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            const weeklyExpenses = @Json.Serialize(Model.WeeklyExpenses);
+            const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+
+            // Create a more sophisticated gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.7)');    // Deeper blue at the top
+            gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.4)');  // Lighter in the middle
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');    // Very light at the bottom
+
+            const myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Weekly Expenses',
+                        data: weeklyExpenses,
+                        borderColor: 'rgba(37, 99, 235, 1)',  // Slightly deeper blue
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        pointBackgroundColor: 'white',
+                        pointBorderColor: 'rgba(37, 99, 235, 1)',
+                        pointHoverBackgroundColor: 'rgba(37, 99, 235, 1)',
+                        pointHoverBorderColor: 'white',
+                        pointRadius: 7,
+                        pointHoverRadius: 10,
+                        pointHoverBorderWidth: 3,
+                        fill: true,
+                        tension: 0.4  // Smooth curve
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Week',
+                                color: 'rgba(107, 114, 128, 1)',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(209, 213, 219, 0.4)',
+                                borderDash: [5, 5]
+                            },
+                            border: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Expenses (₱)',
+                                color: 'rgba(107, 114, 128, 1)',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '₱' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            titleColor: 'white',
+                            bodyColor: 'rgba(255, 255, 255, 0.7)',
+                            cornerRadius: 8,
+                            padding: 12,
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return '₱' + tooltipItem.raw.toLocaleString();
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: [{
+                    // Add subtle shadow effect
+                    beforeDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+                        ctx.shadowBlur = 10;
+                        ctx.shadowOffsetX = 0;
+                        ctx.shadowOffsetY = 4;
+                    },
+                    afterDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        ctx.shadowColor = 'transparent';
+                        ctx.shadowBlur = 0;
+                        ctx.shadowOffsetX = 0;
+                        ctx.shadowOffsetY = 0;
+                    }
+                }]
+            });
+        });
+    </script>
+}

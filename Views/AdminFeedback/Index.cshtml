@@ -1,0 +1,197 @@
+﻿@model budget_buddy_trial.Models.AdminAnnouncementViewModel
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white shadow-2xl rounded-3xl overflow-hidden">
+            <!-- Header with Gradient and Responsive Design -->
+            <header class="bg-gradient-to-r from-indigo-600 to-purple-700 px-6 py-8">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-white/20 p-3 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h1 class="text-3xl font-bold text-white">Admin Dashboard</h1>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition">
+                            Refresh Dashboard
+                        </button>
+                        <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition">
+                            Export Data
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Notification Area -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="bg-green-50 border-l-4 border-green-500 p-4">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-green-800">@TempData["SuccessMessage"]</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Main Content Grid -->
+            <div class="grid md:grid-cols-2 gap-8 p-8">
+                <!-- Announcement Creation Section -->
+                <section class="space-y-6">
+                    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 shadow-sm">
+                        <h2 class="text-xl font-semibold mb-4 text-indigo-800 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                            </svg>
+                            Create Announcement
+                        </h2>
+                        <form asp-action="CreateAnnouncement" method="post" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                <input type="text" name="title" required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                                <textarea name="content" rows="4" required
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition"></textarea>
+                            </div>
+                            <button type="submit"
+                                    class="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition shadow-md">
+                                Post Announcement
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Existing Announcements Section -->
+                <section class="space-y-6">
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4 text-indigo-800 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-lienjoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                            </svg>
+                            Current Announcements
+                        </h2>
+                        @if (Model?.Announcements != null && Model.Announcements.Any())
+                        {
+                            <div class="space-y-4">
+                                @foreach (var announcement in Model.Announcements)
+                                {
+                                    <div class="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition group">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <h3 class="font-bold text-lg text-gray-900 group-hover:text-indigo-700 transition-colors">
+                                                @announcement.Title
+                                            </h3>
+                                            <form asp-action="DeleteAnnouncement" method="post" class="ml-4">
+                                                <input type="hidden" name="announcementId" value="@announcement.AnnouncementId" />
+                                                <button type="submit" class="text-red-500 hover:text-red-700 transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <p class="text-gray-600 mb-3">@announcement.Content</p>
+                                        <div class="text-sm text-gray-500 flex justify-between items-center">
+                                            <span>Posted on: @announcement.PostedDate.ToString("dd MMM yyyy")</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="bg-gray-100 border-l-4 border-gray-500 p-4 text-gray-700 rounded-r-lg">
+                                <p>No announcements created yet.</p>
+                            </div>
+                        }
+                    </div>
+                </section>
+            </div>
+
+            <!-- Feedback Section -->
+            <section class="bg-gray-50 p-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    User Feedback
+                </h2>
+                @if (Model?.Feedbacks != null && Model.Feedbacks.Any())
+                {
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach (var feedback in Model.Feedbacks)
+                        {
+                            <div class="bg-white border border-purple-100 rounded-lg p-6 hover:shadow-md transition group">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="font-bold text-lg text-purple-900 group-hover:text-purple-700 transition-colors">
+                                        @feedback.Title
+                                    </h3>
+                                    <form asp-action="UpdateFeedbackStatus" method="post" class="flex items-center">
+                                        <input type="hidden" name="feedbackId" value="@feedback.FeedbackId" />
+                                        <select name="status" class="mr-2 px-2 py-1 border rounded-lg text-sm @GetStatusColor(feedback.Status)">
+                                            @foreach (var status in Enum.GetValues(typeof(FeedbackStatus)))
+                                            {
+                                                <option value="@status" selected="@(feedback.Status.ToString() == status.ToString())">@status</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="text-purple-500 hover:text-purple-700 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="mb-4">
+                                    <p class="text-gray-600">@feedback.Content</p>
+                                </div>
+                                <div class="text-sm text-gray-500 space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="font-medium">From: @feedback.Username</span>
+                                        <span class="text-gray-400">@feedback.Email</span>
+                                    </div>
+                                    <div class="text-right text-gray-400">
+                                        Submitted: @feedback.SubmissionDate.ToString("dd MMM yyyy HH:mm")
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="bg-gray-100 border-l-4 border-gray-500 p-4 text-gray-700 rounded-r-lg">
+                        <p>No user feedback received.</p>
+                    </div>
+                }
+            </section>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetStatusColor(FeedbackStatus status)
+    {
+        return status switch
+        {
+            FeedbackStatus.Pending => "text-yellow-500",
+            FeedbackStatus.InProgress => "text-blue-500",
+            FeedbackStatus.Resolved => "text-green-500",
+            FeedbackStatus.Closed => "text-gray-500",
+            _ => "text-gray-500"
+        };
+    }
+}

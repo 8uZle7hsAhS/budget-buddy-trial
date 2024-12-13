@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\budget-buddy-trial.props" />
+</Project>

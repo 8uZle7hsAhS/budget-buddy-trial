@@ -1,0 +1,108 @@
+﻿@model List<BudgetCategory>
+
+<div class="container mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-white to-blue-100 min-h-screen">
+    <header class="bg-gradient-to-r from-purple-600 to-indigo-700 text-white shadow-2xl rounded-2xl p-6 mb-10 overflow-hidden relative">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="flex items-center relative z-10">
+            <div class="bg-white/20 p-4 rounded-full mr-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-4xl font-bold tracking-tight">Budget Categories</h2>
+                <p class="text-lg mt-2 text-white/80">Manage and track your spending categories</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Success/Error Message Section -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="mb-6 p-4 bg-gradient-to-r from-green-400 to-green-600 text-white shadow-lg rounded-lg animate-pulse" role="alert">
+            <span class="font-bold">Success: </span>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="mb-6 p-4 bg-gradient-to-r from-red-400 to-red-600 text-white shadow-lg rounded-lg animate-pulse" role="alert">
+            <span class="font-bold">Error: </span>
+            <span>@TempData["ErrorMessage"]</span>
+        </div>
+    }
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+        @foreach (var category in Model)
+        {
+            <div class="bg-white rounded-2xl shadow-xl border border-blue-100 p-6 relative overflow-hidden group transition transform hover:scale-105 hover:shadow-2xl">
+
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-blue-900 tracking-tight">@category.Name</h3>
+                    <div class="flex items-center space-x-2">
+                        <span class="@GetStatusClass(category.Status) px-3 py-1 rounded-full text-xs font-semibold">
+                            @category.Status
+                        </span>
+                        <!-- Add delete button -->
+                        <form asp-controller="Categories" asp-action="Delete" method="post" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                            <input type="hidden" name="id" value="@category.Id" />
+                            <button type="submit" class="text-red-600 hover:text-red-800 z-20">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 mb-3">
+                    <span>Remaining Budget</span>
+                    <span class="font-bold text-blue-800">₱@category.RemainingBudget / ₱@category.TotalBudget</span>
+                </div>
+                <div class="w-full bg-blue-100 rounded-full h-2.5 overflow-hidden">
+                    <div class="@GetProgressBarClass(category)" style="width: @CalculateProgressPercentage(category)%"></div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <form asp-controller="Categories" asp-action="Create" method="post" class="bg-white rounded-2xl shadow-2xl border-4 border-blue-100 p-8 relative overflow-hidden">
+        <div class="absolute -top-6 -right-6 w-24 h-24 bg-purple-400 rounded-full opacity-10 filter blur-xl"></div>
+        <div class="flex items-center mb-6 relative z-10">
+            <div class="bg-blue-100 p-2 rounded-full mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-blue-900 tracking-tight">Create New!</h3>
+        </div>
+        
+        <button type="submit" class="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105">
+            Create Budget Category
+        </button>
+    </form>
+</div>
+
+@{
+    string GetStatusClass(BudgetStatus status) => status switch
+    {
+        BudgetStatus.Active => "bg-green-100 text-green-800",
+        BudgetStatus.Warning => "bg-yellow-100 text-yellow-800",
+        BudgetStatus.Exceeded => "bg-red-100 text-red-800",
+        _ => "bg-gray-100 text-gray-800"
+    };
+
+    string GetProgressBarClass(BudgetCategory category) => category.Status switch
+    {
+        BudgetStatus.Active => "bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full",
+        BudgetStatus.Warning => "bg-gradient-to-r from-yellow-500 to-yellow-600 h-2.5 rounded-full",
+        BudgetStatus.Exceeded => "bg-gradient-to-r from-red-500 to-red-600 h-2.5 rounded-full",
+        _ => "bg-gray-500 h-2.5 rounded-full"
+    };
+
+    string CalculateProgressPercentage(BudgetCategory category)
+    {
+        if (category.TotalBudget == 0) return "0";
+        var percentage = (category.RemainingBudget / category.TotalBudget) * 100;
+        return (100 - percentage).ToString("F0");
+    }
+}
